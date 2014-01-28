@@ -1,4 +1,4 @@
 SkriptHidden
 ============
 
-Hidden script for Skript. Edit Test ~Drago
+Hidden script for Skript.
