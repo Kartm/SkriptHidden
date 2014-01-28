@@ -1,19 +1,53 @@
 #------------------Configuration start------------------#
 options:
-	multiitems: true
-	item-show: ender pearl
-	item-hide: eye of ender
-	item-show-hide: ender pearl
-	hidenprefix: &7[&2Hiden&7]
+	item-hide-show: ender pearl
+	hiddenprefix: &7[&2Hidden&7]
+
+	item-show-name: &cPokaz graczy
+	item-hide-name: &cUkryj Graczy
 #-------------------Configuration end-------------------#
- 
+
+#-------------Variables configuration start-------------#
+variables:
+	{hide.%player%} = false
+#--------------Variables configuration end--------------#
+
 #-------------------Script code start-------------------#
 on script load:
-	set {msg.hideallplayers} to value of "MSG-HideAllPlayers" pulled from "Hiden-Messages"
-	set {msg.hideallfriends} to value of "MSG-HideAllFriends" pulled from "Hiden-Messages"
-	set {msg.showallplayers} to value of "MSG-ShowAllPlayers" pulled from "Hiden-Messages"
-	set {msg.showallfriends} to value of "MSG-ShowAllFriends" pulled from "Hiden-Messages"
-	set {msg.load} to value of "MSG-Load" pulled from "Hiden-Messages"
-	set {msg.reload} to value of "MSG-Reload" pulled from "Hiden-Messages"
+	set {msg.hideallplayers} to value of "MSG-HideAllPlayers" pulled from "Hidden-Messages"
+	set {msg.showallplayers} to value of "MSG-ShowAllPlayers" pulled from "Hidden-Messages"
+	set {msg.load} to value of "MSG-Load" pulled from "Hidden-Messages"
+	set {msg.reload} to value of "MSG-Reload" pulled from "Hidden-Messages"
 	send "%coloured {msg.load}%" to the console
+
+command /hidden [<text>]:
+	trigger:
+		if arg 1 is "reload":
+			if player has permission "hidden.reload":
+				make player execute command "skript reload %script%"
+				send "{@hiddenprefix} %coloured {msg.reload}%"
+				stop
+		if arg 1 is "item":
+			if {hide.%name of player%} is false:
+				give ender pearl named "{@item-hide-name}" to the player
+				stop
+			else:
+				give ender pearl named "{@item-show-name}" to the player
+				stop
+on right click holding {@item-hide-show}:
+	if name of the player's tool is "{@item-hide-name}":
+		cancel event
+		hide all players from the player
+		set {hide.%name of player%} to true
+		set name of the player's tool to "{@item-show-name}"
+		send "{@hiddenprefix} %coloured {msg.hideallplayers}%"
+		stop
+on left click holding {@item-hide-show}:
+	if name of the player's tool is "{@item-show-name}":
+		cancel event
+		set {hide.%name of player%} to false
+		reveal all players to the player
+		set name of the player's tool to "{@item-hide-name}"
+		send "{@hiddenprefix} %coloured {msg.showallplayers}%"
+		stop
 #--------------------Script code end--------------------#
