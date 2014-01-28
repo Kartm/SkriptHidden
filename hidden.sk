@@ -14,14 +14,44 @@ variables:
 
 #-------------------Script code start-------------------#
 on script load:
+	set {msg.playerisadded} to value of "MSG-PlayerIsAlreadyAdded" pulled from "Hidden-Messages"
+	set {msg.playerisonline} to value of "MSG-PlayerIsOnline" pulled from "Hidden-Messages"
+	set {msg.playerwasadded} to value of "MSG-PlayerWasAdded" pulled from "Hidden-Messages"
+	set {msg.playerwasremoved} to value of "MSG-PlayerWasRemoved" pulled from "Hidden-Messages"
 	set {msg.hideallplayers} to value of "MSG-HideAllPlayers" pulled from "Hidden-Messages"
 	set {msg.showallplayers} to value of "MSG-ShowAllPlayers" pulled from "Hidden-Messages"
 	set {msg.load} to value of "MSG-Load" pulled from "Hidden-Messages"
 	set {msg.reload} to value of "MSG-Reload" pulled from "Hidden-Messages"
 	send "%coloured {msg.load}%" to the console
-
-command /hidden [<text>]:
+command /hidden [<text>] [<player>]:
 	trigger:
+		if arg 1 is "add":
+			if arg 2 is set:
+				if arg 2 is online:
+					if {hidden.%arg 2%.%name of player%.friend} is not set:
+						set {hidden.%arg 2%.%name of player%.friend} to false
+						if {hidden.%arg 2%.%name of player%.friend} is false:
+							set {hidden.%arg 2%.%name of player%.friend} to true
+							send "{@hiddenprefix} %coloured {msg.playerwasadded}%"
+							stop
+					else:
+						send "{@hiddenprefix} %coloured {msg.playerisadded}%"
+						stop
+				else:
+					send "{@hiddenprefix} %coloured {msg.playerisonline}%"
+					stop
+		if arg 1 is "remove":
+			if arg 2 is set:
+				if arg 2 is online:
+					if {hidden.%arg 2%.%name of player%.friend} is true:
+						set {hidden.%arg 2%.%name of player%.friend} to false
+						send "{@hiddenprefix} %coloured {msg.playerwasremoved}%"
+						stop
+				if arg 2 is offline:
+					if {hidden.%arg 2%.%name of player%.friend} is true:
+						set {hidden.%arg 2%.%name of player%.friend} to false
+						send "{@hiddenprefix} %coloured {msg.playerwasremoved}%"
+						stop
 		if arg 1 is "reload":
 			if player has permission "hidden.reload":
 				make player execute command "skript reload %script%"
@@ -36,12 +66,22 @@ command /hidden [<text>]:
 				stop
 on right click holding {@item-hide-show}:
 	if name of the player's tool is "{@item-hide-name}":
-		cancel event
-		hide all players from the player
-		set {hide.%name of player%} to true
-		set name of the player's tool to "{@item-show-name}"
-		send "{@hiddenprefix} %coloured {msg.hideallplayers}%"
-		stop
+		loop all players:
+			if {hidden.%loop-player%.%name of player%.friend} is true:
+				cancel event
+				hide all players from the player
+				reveal loop-player to the player
+				set {hide.%name of player%} to true
+				set name of the player's tool to "{@item-show-name}"
+				send "{@hiddenprefix} %coloured {msg.hideallplayers}%"
+				stop
+			else:
+				cancel event
+				hide all players from the player
+				set {hide.%name of player%} to true
+				set name of the player's tool to "{@item-show-name}"
+				send "{@hiddenprefix} %coloured {msg.hideallplayers}%"
+				stop
 on left click holding {@item-hide-show}:
 	if name of the player's tool is "{@item-show-name}":
 		cancel event
