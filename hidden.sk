@@ -1,0 +1,19 @@
+#------------------Configuration start------------------#
+options:
+	multiitems: true
+	item-show: ender pearl
+	item-hide: eye of ender
+	item-show-hide: ender pearl
+	hidenprefix: &7[&2Hiden&7]
+#-------------------Configuration end-------------------#
+ 
+#-------------------Script code start-------------------#
+on script load:
+	set {msg.hideallplayers} to value of "MSG-HideAllPlayers" pulled from "Hiden-Messages"
+	set {msg.hideallfriends} to value of "MSG-HideAllFriends" pulled from "Hiden-Messages"
+	set {msg.showallplayers} to value of "MSG-ShowAllPlayers" pulled from "Hiden-Messages"
+	set {msg.showallfriends} to value of "MSG-ShowAllFriends" pulled from "Hiden-Messages"
+	set {msg.load} to value of "MSG-Load" pulled from "Hiden-Messages"
+	set {msg.reload} to value of "MSG-Reload" pulled from "Hiden-Messages"
+	send "%coloured {msg.load}%" to the console
+#--------------------Script code end--------------------#
